@@ -1,6 +1,6 @@
 # Serious Sam: Shatterverse Save Editor
 
-A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.3.0 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
+A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.4.9 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
 
 ## What the app can do
 
@@ -8,6 +8,7 @@ A portable Windows desktop app for viewing and editing supported fields in Serio
 - Edit currency values already present in the save. Values must be at least 1. A missing currency is shown as unavailable; earn it in-game, then reopen the save before editing it.
 - View and change recognized character, weapon, Intel, Codex, challenge, and progression values. The Field Lab lists recognized fields with their stored type and offset; raw edits are marked unsafe.
 - Browse owned trinkets, inspect their rarity, rank, level, magnitude, base roll, shape, and decoded secondary stats, and edit the fields the parser recognizes.
+- Max one or all owned trinkets to Level 6 and Rank 6. Magnitude increases by 7 percentage points per rank gained. Base roll and all other fields are unchanged.
 - Change the rarity suffix for compatible trinkets and replace an existing owned slot with a compatible observation from the Workshop.
 - Use the Workshop's bundled observed trinket records, import observations from another save or an exported `.trinket`, and keep imported observations in this app's local browser storage.
 - Create or remove a trinket where the save structure supports it. These operations change the save structure and are explicitly high risk.
@@ -23,7 +24,7 @@ This is a research editor for a partially reverse-engineered format, not a compl
 - The Workshop's trinket observations are examples, not a complete canonical catalog or verified range table. Importing another save adds examples locally; it does not merge that save into the active save.
 - Trinket creation requires a compatible owned structure template, including a matching secondary-stat key layout. Adding/removing items resizes serialized arrays and can still corrupt a save.
 - Replacing a trinket in an existing slot is the preferred lower-risk option because it preserves the slot layout. It is not guaranteed safe for every save or game version.
-- The app does not fully decode Catalyst Boons, equipped/loadout state, every trinket flag, or every progress/unlock field. Some names and values remain raw or uncertain.
+- F is an unknown 0/1 flag. Editing it has broken saves; it remains marked unsafe and should be left unchanged unless experimenting on a backup copy. The app does not fully decode Catalyst Boons, equipped/loadout state, or every progress/unlock field. Some names and values remain raw or uncertain.
 - Field Lab edits can change values whose meanings, constraints, or valid ranges are unknown. Avoid changing fields you cannot identify.
 - Save merging is unsupported. Codex records represent unique entry types; duplicating entries while combining saves has produced invalid saves.
 - The game can reject or rewrite a save after an edit even when the editor reports success. A backup helps recovery but does not make a risky edit safe.

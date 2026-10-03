@@ -1,7 +1,7 @@
 import bundledStoneCatalog from './data/stones_observed.json';
 
 // Current project credit: xcibe95x.
-const REPOSITORY_URL = '';
+const REPOSITORY_URL = 'https://github.com/xcibe95x/Shatterverse-Save-Editor';
 const invoke = (...args) => window.__TAURI__.core.invoke(...args);
 
 const state = { save: null, page: 'overview', search: '', catalogSet: 'ALL', selectedStone: null, templateTargetIndex: null, modal: null, toast: null, expandedObservation: null, unlocksTab: 'sams', advancedClosed: new Set(), advancedOpen: null, backups: [] };
@@ -19,7 +19,7 @@ function currencyIcon(name) {
     : icon(meta.icon);
 }
 const unsafeTag = () => `<span class="unsafe-tag">(Unsafe)</span>`;
-const rollLabels = { Sh: 'Shape ID', B: 'Base roll', M: 'Magnitude', F: 'Unknown flag' };
+const rollLabels = { Sh: 'Shape ID', B: 'Base roll', M: 'Magnitude', F: 'Unknown byte' };
 const FLAG_META = {
   bCC: { label: 'Challenge completed', hint: 'Marks a codex challenge as finished' },
   bCl: { label: 'Reward claimed', hint: 'Marks a finished challenge’s reward as collected' },
@@ -39,6 +39,7 @@ const ICONS = {
   grid: '<rect x="3" y="3" width="6" height="6"/><rect x="11" y="3" width="6" height="6"/><rect x="3" y="11" width="6" height="6"/><rect x="11" y="11" width="6" height="6"/>',
   flask: '<path d="M8 3h4M8.5 3v4.5L4.5 15a1.5 1.5 0 0 0 1.3 2.3h8.4a1.5 1.5 0 0 0 1.3-2.3l-4-7.5V3"/><path d="M6.3 12.5h7.4"/>',
   coin: '<circle cx="10" cy="10" r="7"/><circle cx="10" cy="10" r="4"/><path d="M10 7.3v5.4M8.4 10h3.2"/>',
+  save: '<path d="M4 3h10l3 3v11H3V3z"/><path d="M6 3v5h8V3M6 17v-6h8v6"/>',
   gem: '<path d="M4.5 8 7 4h6l2.5 4L10 17z"/><path d="M4.5 8h11M7 4l1.5 4L10 17M13 4l-1.5 4L10 17"/>',
   shard: '<path d="M10 2 6 9l4 9 4-9z"/><path d="M6 9h8M10 2v16"/>',
   search: '<circle cx="8.5" cy="8.5" r="5.5"/><path d="m16.5 16.5-3.6-3.6"/>',
@@ -130,14 +131,58 @@ function stoneNumberField(prop, label, hint, min=-2147483648, max=2147483647) {
   if (!prop) return `<div class="stone-stat-unavailable"><b>${esc(label)}</b><small>Not recognized in this save.</small></div>`;
   return `<label class="stone-edit-field"><span><b>${esc(label)}</b><small>${esc(hint)}</small></span><input aria-label="${esc(label)}" data-value="${prop.value_at}" type="number" min="${min}" max="${max}" step="1" required value="${esc(prop.value)}"></label>`;
 }
+function unsafeByteField(prop) {
+  if (!prop) return '';
+  return `<label class="stone-edit-field"><span><b>F ${unsafeTag()}</b><small>Unknown flag (0 or 1). Editing F has broken saves; only experiment on a backup copy.</small></span><input aria-label="F (Unsafe)" data-value="${prop.value_at}" type="number" min="0" max="1" step="1" required value="${esc(prop.value)}"></label>`;
+}
 function trinketArt(rarity) {
   const tier = ['common','uncommon','rare','epic','legendary'].includes(rarity) ? rarity : 'rare';
   return `<img src="/assets/trinket-${tier}.png" alt="${tier} trinket" aria-hidden="true">`;
 }
 
+function captureViewState(root) {
+  const pathTo = element => {
+    const path=[];
+    while(element&&element!==root){
+      const parent=element.parentElement;
+      if(!parent)return null;
+      path.unshift(Array.prototype.indexOf.call(parent.children,element));
+      element=parent;
+    }
+    return element===root?path:null;
+  };
+  const scroll=[];
+  for(const element of [root,...root.querySelectorAll('*')]){
+    if(element.scrollHeight>element.clientHeight+1||element.scrollWidth>element.clientWidth+1){
+      scroll.push({path:pathTo(element),top:element.scrollTop,left:element.scrollLeft});
+    }
+  }
+  const active=document.activeElement;
+  const focus=active&&root.contains(active)&&/^(INPUT|SELECT|TEXTAREA)$/.test(active.tagName)?pathTo(active):null;
+  return {x:window.scrollX,y:window.scrollY,scroll,focus};
+}
+function restoreViewState(root, view) {
+  const atPath=path=>{
+    let element=root;
+    for(const index of path??[]){element=element?.children[index];if(!element)return null;}
+    return element;
+  };
+  for(const item of view.scroll){
+    const element=atPath(item.path);
+    if(element){element.scrollTop=item.top;element.scrollLeft=item.left;}
+  }
+  if(view.focus){
+    const element=atPath(view.focus);
+    if(element&&/^(INPUT|SELECT|TEXTAREA)$/.test(element.tagName))element.focus({preventScroll:true});
+  }
+  window.scrollTo(view.x,view.y);
+}
+
 function render() {
+  const root=document.querySelector('#app');
+  const view=captureViewState(root);
   const s = state.save;
-  document.querySelector('#app').innerHTML = `
+  root.innerHTML = `
     <div class="shell">
       <aside class="rail">
         <div class="brand"><img class="brand-mark" src="/app-icon.ico" alt="" /><div><b>SHATTERVERSE</b><small>SAVE EDITOR</small></div></div>
@@ -145,7 +190,7 @@ function render() {
         <div class="rail-label">EDIT SAVE</div>
         <nav>${nav.map(([id, ic, text]) => `<button class="nav-item ${state.page===id?'active':''}" data-page="${id}"><span class="nav-icon">${icon(ic)}</span>${text}${id==='stones'&&s?`<em>${s.stones.length}</em>`:''}</button>`).join('')}</nav>
         <div class="rail-spacer"></div>
-        <div class="rail-foot"><span>LOCAL SAVE · V0.3.0 BETA · XCIBE95X</span>${REPOSITORY_URL ? `<a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a>` : '<span class="repository-placeholder">GitHub repository · coming soon</span>'}</div>
+        <div class="rail-foot"><span>LOCAL SAVE · V0.4.9 BETA · XCIBE95X</span><a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a></div>
       </aside>
       <main class="main">
         <header class="topbar"><div class="crumb"><span class="crumb-root">SAVE</span><b>/</b><strong>${esc(nav.find(x=>x[0]===state.page)?.[2]??'Currencies')}</strong><span class="crumb-file">${s?esc(s.filename):'No save loaded'}</span></div><div class="top-actions">${s?`<span class="save-state ${s.has_unsaved_changes?'pending':''}">${s.has_unsaved_changes?'CHANGES PENDING':'SAVE LOADED'}</span>${s.has_unsaved_changes?'<button class="button button-quiet" data-action="undo">Revert</button>':''}<button class="button button-quiet" data-action="open-backups">Backups</button>`:''}<button class="button button-quiet" data-action="open">Open save</button><button class="button button-save" data-action="save" ${!s?.has_unsaved_changes?'disabled':''}>Save changes <span>↗</span></button></div></header>
@@ -155,6 +200,7 @@ function render() {
     </div>
     ${state.modal?modalHtml():''}${state.toast?`<div class="toast ${state.toast.error?'error':''}"><span>${state.toast.error?'!':'✓'}</span>${esc(state.toast.message)}</div>`:''}`;
   bind();
+  restoreViewState(root,view);
 }
 
 function welcome() {
@@ -186,8 +232,8 @@ function stonesPage() {
   const selected=state.save.stones.find(s=>s.index===state.selectedStone)??state.save.stones[0];
   const rarityCounts=Object.values(RARITY).map(r=>({ ...r, count:state.save.stones.filter(s=>rarityOf(s.id).cls===r.cls).length }));
   return `<div class="page-body trinket-page">${pageIntro('INVENTORY','Trinkets',`${state.save.stones.length} owned · ${list.length} shown`, `<label class="searchbox">${icon('search')}<input id="stone-search" aria-label="Search trinkets" placeholder="Search inventory" value="${esc(state.search)}"></label>`)}
-    <div class="stone-workspace"><section class="panel inventory-panel"><div class="inventory-toolbar"><div class="inventory-list-heading"><div><h2>Owned trinkets</h2><p>Select an item to inspect or edit it.</p></div><span>${list.length} ITEMS</span></div></div><div class="trinket-grid">${list.map(s=>{const r=rarityOf(s.id);return `<button class="trinket-tile r-${r.cls} ${selected?.index===s.index?'selected':''}" data-stone="${s.index}" aria-pressed="${selected?.index===s.index}"><span class="trinket-art">${trinketArt(r.cls)}</span><span class="trinket-tile-info"><b>${esc(s.id)}</b><small>${esc(s.stone_set)}</small><span class="trinket-tile-meta">${rarityTag(s.id)}<span>Rank ${s.rank}</span></span>${stars(s.rank)}</span></button>`;}).join('')||`<div class="inventory-empty"><b>No Trinkets available</b><p>${state.save.stones.length?'No items match this search.':'This save has no owned trinkets yet. The trinket array is absent, so adding is unavailable. Earn a trinket in-game, then reopen this save.'}</p></div>`}</div><div class="inventory-foot"><div class="rarity-legend">${rarityCounts.map(r=>`<span class="legend-${r.cls}"><i></i>${r.count}</span>`).join('')}</div><b>${state.save.stones.length}/100</b></div></section>
-      ${selected?(()=>{const r=rarityOf(selected.id);const stoneScope=`Stone ${selected.index}`;const field=(name)=>props().find(p=>p.scope===stoneScope&&p.name===name&&p.editable&&p.value_at!==null);return `<aside class="panel detail-panel trinket-detail r-${r.cls}"><div class="detail-top"><span>Trinket details</span><span class="record-number">Record ${selected.index}</span></div><div class="trinket-detail-heading"><div class="detail-sigil">${trinketArt(r.cls)}</div><div class="detail-title"><h2>${esc(selected.id)}</h2><p>${esc(selected.stone_set)}</p><div class="detail-rarity">${rarityTag(selected.id)}${rarityLetterOf(selected.id)?`<select class="rarity-select" data-rarity-index="${selected.index}" aria-label="Rarity suffix">${Object.entries(RARITY).map(([letter,info])=>`<option value="${letter}" ${letter===rarityLetterOf(selected.id)?'selected':''}>${info.name} (_${letter})</option>`).join('')}</select>`:''}<span>Rank ${selected.rank} of 6</span>${selected.id==='AlienWeapon'?`<small class="rarity-note">Unique item — rarity tier is not stored in its ID.</small>`:''}</div>${stars(selected.rank)}</div></div><div class="detail-fields"><div class="field-row"><div><b>Level</b><small>How developed this trinket is.</small></div><div class="stepper"><button aria-label="Decrease level" data-step="${selected.level_offset}" data-delta="-1">−</button><input aria-label="Trinket level" data-value="${selected.level_offset}" value="${selected.level}" type="number" min="0" max="2147483647" step="1" required><button aria-label="Increase level" data-step="${selected.level_offset}" data-delta="1">＋</button></div></div><div class="field-row"><div><b>Rank</b><small>Higher rank adds more stars.</small></div><div class="stepper"><button aria-label="Decrease rank" data-step="${selected.rank_offset}" data-delta="-1">−</button><input aria-label="Trinket rank" data-value="${selected.rank_offset}" value="${selected.rank}" type="number" min="0" max="6" step="1" required><button aria-label="Increase rank" data-step="${selected.rank_offset}" data-delta="1">＋</button></div></div>${selected.foil!==null?`<div class="field-row"><div><b>F ${unsafeTag()}</b><small>Raw saved byte; its purpose is not confirmed.</small></div><button class="toggle ${selected.foil!==0?'on':''}" data-bytebool="${selected.foil_offset}"><i></i></button></div>`:''}${stoneNumberField(field('M'),'Magnitude','Primary trinket stat value.')}${stoneNumberField(field('B'),'Base roll','Raw saved roll; its exact game formula is not confirmed.')}${stoneNumberField(field('Sh'),'Shape ID','Internal slot-shape value. Observed range: 1–6.')}</div><div class="secondary-block"><div class="subhead"><b>Bonus stats · edit values</b><span>${selected.secondary.length}</span></div>${selected.secondary.length?selected.secondary.map(([k,v])=>{const prop=field(`SecS[${k}]`);return prop?`<label class="secondary-row secondary-edit"><span><b>${friendlyStatHtml(k)}</b><small>${esc(k)}</small></span><input aria-label="${esc(friendlyStatName(k))}" data-value="${prop.value_at}" type="number" min="-2147483648" max="2147483647" step="1" required value="${fmt(v)}"></label>`:`<div class="secondary-row"><span>${friendlyStatHtml(k)}<small>${esc(k)}</small></span><b>${fmt(v)}</b></div>`}).join(''):'<div class="empty-inline">No bonus stats were decoded for this trinket.</div>'}</div><div class="detail-actions"><button class="button button-quiet" data-action="export-trinket" data-index="${selected.index}">Export to file</button><button class="button button-danger" data-action="open-remove" data-index="${selected.index}" ${state.save.stones.length>1?'':'disabled'}>Remove trinket</button><p class="safe-edit-note">Use Trinket Workshop to replace this item. Add/remove actions change save structure and require an extra backup confirmation.</p></div></aside>`;})():`<aside class="panel detail-panel detail-empty"><b>No trinket selected</b><span>Choose an item from the collection to view its details.</span></aside>`}</div></div>`;
+    <div class="stone-workspace"><section class="panel inventory-panel"><div class="inventory-toolbar"><div class="inventory-list-heading"><div><h2>Owned trinkets</h2><p>Select an item to inspect or edit it.</p></div><span>${list.length} ITEMS</span></div><button class="button button-primary" data-action="max-all-trinkets" title="Sets Level and Rank to 6 and raises Magnitude by 7 percentage points for each rank gained. Leaves Base roll and every other field unchanged.">Max All Trinkets</button></div><div class="trinket-grid">${list.map(s=>{const r=rarityOf(s.id);return `<button class="trinket-tile r-${r.cls} ${selected?.index===s.index?'selected':''}" data-stone="${s.index}" aria-pressed="${selected?.index===s.index}"><span class="trinket-art">${trinketArt(r.cls)}</span><span class="trinket-tile-info"><b>${esc(s.id)}</b><small>${esc(s.stone_set)}</small><span class="trinket-tile-meta">${rarityTag(s.id)}<span>Rank ${s.rank}</span></span>${stars(s.rank)}</span></button>`;}).join('')||`<div class="inventory-empty"><b>No Trinkets available</b><p>${state.save.stones.length?'No items match this search.':'This save has no owned trinkets yet. The trinket array is absent, so adding is unavailable. Earn a trinket in-game, then reopen this save.'}</p></div>`}</div><div class="inventory-foot"><div class="rarity-legend">${rarityCounts.map(r=>`<span class="legend-${r.cls}"><i></i>${r.count}</span>`).join('')}</div><b>${state.save.stones.length}/100</b></div></section>
+      ${selected?(()=>{const r=rarityOf(selected.id);const stoneScope=`Stone ${selected.index}`;const field=(name)=>props().find(p=>p.scope===stoneScope&&p.name===name&&p.editable&&p.value_at!==null);return `<aside class="panel detail-panel trinket-detail r-${r.cls}"><div class="detail-top"><span>Trinket details</span><div class="detail-top-actions"><span class="record-number">Record ${selected.index}</span><button class="button button-primary max-trinket-button" data-action="max-trinket" data-index="${selected.index}" title="Sets Level and Rank to 6 and raises Magnitude by 7 percentage points for each rank gained. Leaves Base roll and every other field unchanged.">Max Trinket</button></div></div><div class="trinket-detail-heading"><div class="detail-sigil">${trinketArt(r.cls)}</div><div class="detail-title"><h2>${esc(selected.id)}</h2><p>${esc(selected.stone_set)}</p><div class="detail-rarity">${rarityTag(selected.id)}${rarityLetterOf(selected.id)?`<select class="rarity-select" data-rarity-index="${selected.index}" aria-label="Rarity suffix">${Object.entries(RARITY).map(([letter,info])=>`<option value="${letter}" ${letter===rarityLetterOf(selected.id)?'selected':''}>${info.name} (_${letter})</option>`).join('')}</select>`:''}<span>Rank ${selected.rank} of 6</span>${selected.id==='AlienWeapon'?`<small class="rarity-note">Unique item — rarity tier is not stored in its ID.</small>`:''}</div>${stars(selected.rank)}</div></div><div class="detail-fields"><section class="trinket-detail-section"><div class="trinket-section-title">Progression</div><div class="field-row"><div><b>Level</b><small>How developed this trinket is.</small></div><div class="stepper"><button aria-label="Decrease level" data-step="${selected.level_offset}" data-delta="-1">−</button><input aria-label="Trinket level" data-value="${selected.level_offset}" value="${selected.level}" type="number" min="0" max="2147483647" step="1" required><button aria-label="Increase level" data-step="${selected.level_offset}" data-delta="1">＋</button></div></div><div class="field-row"><div><b>Rank</b><small>Higher rank adds more stars.</small></div><div class="stepper"><button aria-label="Decrease rank" data-step="${selected.rank_offset}" data-delta="-1">−</button><input aria-label="Trinket rank" data-value="${selected.rank_offset}" value="${selected.rank}" type="number" min="0" max="6" step="1" required><button aria-label="Increase rank" data-step="${selected.rank_offset}" data-delta="1">＋</button></div></div></section><section class="trinket-detail-section"><div class="trinket-section-title">Primary Stats</div>${stoneNumberField(field('M'),'Magnitude','Main trinket stat value.')}</section></div><div class="secondary-block"><div class="trinket-section-title"><b>Bonus Stats</b><span>${selected.secondary.length} values</span></div>${selected.secondary.length?selected.secondary.map(([k,v])=>{const prop=field(`SecS[${k}]`);return prop?`<label class="secondary-row secondary-edit"><span><b>${friendlyStatHtml(k)}</b><small>${esc(k)}</small></span><input aria-label="${esc(friendlyStatName(k))}" data-value="${prop.value_at}" type="number" min="-2147483648" max="2147483647" step="1" required value="${esc(v)}"></label>`:`<div class="secondary-row"><span>${friendlyStatHtml(k)}<small>${esc(k)}</small></span><b>${fmt(v)}</b></div>`}).join(''):'<div class="empty-inline">No bonus stats were decoded for this trinket.</div>'}</div><section class="trinket-appearance trinket-detail-section"><div class="trinket-section-title">Appearance &amp; Slot</div><p>These saved values can change how the trinket looks or which slot it fits.</p>${stoneNumberField(field('B'),'Base Roll','Can affect the in-game model or icon.')}${stoneNumberField(field('Sh'),'Shape ID','Controls the trinket slot shape. Observed range: 1–6.',1,6)}${selected.foil!==null?unsafeByteField(field('F')):''}</section><div class="detail-actions"><button class="button button-quiet" data-action="export-trinket" data-index="${selected.index}">Export to file</button><button class="button button-danger" data-action="open-remove" data-index="${selected.index}" ${state.save.stones.length>1?'':'disabled'}>Remove trinket</button><p class="safe-edit-note">Use Trinket Workshop to replace this item. Add/remove actions change save structure and require an extra backup confirmation.</p></div></aside>`;})():`<aside class="panel detail-panel detail-empty"><b>No trinket selected</b><span>Choose an item from the collection to view its details.</span></aside>`}</div></div>`;
 }
 const WEAPON_IDS = new Set(['Raygun','RaptorSniperRifle','MiniGun','XOPFlamethrower','MKGrenadeLauncher','RocketLauncher','SBCCannon','DoubleBarrelShotgun','LaserPistol','Lasergun','AlphaRevolver','AlphaRevolverAlt','PulseShotgun','DimensionBreaker','ReptiloidSpellbook']);
 function unlockGroups() {
@@ -207,7 +253,10 @@ function unlockGroups() {
   return { sams: sams.sort(bySort), weapons: weapons.sort(bySort), intels: intels.sort(bySort) };
 }
 function codexGroups() {
-  const items = props().filter(p => p.scope.startsWith('Codex: '));
+  // A Codex record also contains ID, ServerId, and the CQP array header.
+  // Only these four fields belong to each individual challenge.
+  const challengeFields = new Set(['CID', 'CP', 'bCC', 'bCl']);
+  const items = props().filter(p => p.scope.startsWith('Codex: ') && challengeFields.has(p.name));
   const byId = new Map();
   for (const p of items) {
     const id = p.scope.slice('Codex: '.length);
@@ -218,19 +267,28 @@ function codexGroups() {
   for (const [id, fields] of byId) {
     fields.sort((a, b) => a.tag_at - b.tag_at);
     const challenges = [];
-    for (let i = 0; i + 3 < fields.length; i += 4) {
-      challenges.push({ cid: fields[i], cp: fields[i+1], bcc: fields[i+2], bcl: fields[i+3] });
+    let challenge = null;
+    for (const field of fields) {
+      if (field.name === 'CID') {
+        if (challenge?.cid) challenges.push(challenge);
+        challenge = { cid: field };
+      } else if (challenge) {
+        if (field.name === 'CP') challenge.cp = field;
+        else if (field.name === 'bCC') challenge.bcc = field;
+        else if (field.name === 'bCl') challenge.bcl = field;
+      }
     }
+    if (challenge?.cid) challenges.push(challenge);
     entries.push({ id, challenges });
   }
   return entries.sort((a, b) => a.id.localeCompare(b.id));
 }
 function unlockRow(item) {
-  const unlocked = !item.bl || Number(item.bl.value) === 0;
-  return `<div class="unlock-row"><div class="unlock-id">${icon(unlocked?'unlock':'lock', unlocked?'unlocked':'locked')}<b>${esc(item.id)}</b></div>${item.sp?`<div class="unlock-stack"><small>Stack level ${unsafeTag()} · meaning unknown</small><input class="property-input" data-value="${item.sp.value_at}" value="${item.sp.value}" type="number" min="0" required></div>`:''}${item.bl?`<button class="toggle ${unlocked?'on':''}" data-bool="${item.bl.value_at}" aria-label="Unlocked: ${esc(item.id)}" aria-pressed="${unlocked}"><i></i></button>`:'<span class="readout">No unlock flag found</span>'}</div>`;
+  const unlocked = !item.bl || Number(item.bl.value) !== 0;
+  return `<div class="unlock-row"><div class="unlock-id">${icon(unlocked?'unlock':'lock', unlocked?'unlocked':'locked')}<b>${esc(item.id)}</b></div>${item.sp?`<div class="unlock-stack"><small>Stack level</small><input class="property-input" data-value="${item.sp.value_at}" value="${esc(item.sp.value)}" type="number" step="1" required></div>`:''}${item.bl?`<button class="toggle ${unlocked?'on':''}" data-bool="${item.bl.value_at}" aria-label="Unlocked: ${esc(item.id)}" aria-pressed="${unlocked}"><i></i></button>`:'<span class="readout">No unlock flag found</span>'}</div>`;
 }
 function challengeRow(entry) {
-  return `<div class="codex-entry"><div class="codex-entry-id">${esc(entry.id)}</div>${entry.challenges.map((c,i)=>`<div class="codex-challenge"><small>Challenge ${i+1}${c.cid?` · CID ${c.cid.value}`:''}</small><div class="codex-challenge-fields">${c.cp?`<label>Progress<input class="property-input" data-value="${c.cp.value_at}" value="${c.cp.value}" type="number" min="0" required></label>`:''}${c.bcc?`<label>Completed<button class="toggle ${Number(c.bcc.value)!==0?'on':''}" data-bool="${c.bcc.value_at}"><i></i></button></label>`:''}${c.bcl?`<label>Claimed<button class="toggle ${Number(c.bcl.value)!==0?'on':''}" data-bool="${c.bcl.value_at}"><i></i></button></label>`:''}</div></div>`).join('')}</div>`;
+  return `<div class="codex-entry"><div class="codex-entry-id">${esc(entry.id)}</div>${entry.challenges.map((c,i)=>`<div class="codex-challenge"><small>Challenge ${i+1}${c.cid?` · CID ${c.cid.value}`:''}</small><div class="codex-challenge-fields">${c.cp?.value_at!=null?`<label>Progress<input class="property-input" data-value="${c.cp.value_at}" value="${esc(c.cp.value ?? 0)}" type="number" min="0" required></label>`:''}${c.bcc?.value_at!=null?`<label>Completed<button class="toggle ${Number(c.bcc.value)!==0?'on':''}" data-bool="${c.bcc.value_at}" aria-label="Completed" aria-pressed="${Number(c.bcc.value)!==0}"><i></i></button></label>`:''}${c.bcl?.value_at!=null?`<label>Claimed<button class="toggle ${Number(c.bcl.value)!==0?'on':''}" data-bool="${c.bcl.value_at}" aria-label="Claimed" aria-pressed="${Number(c.bcl.value)!==0}"><i></i></button></label>`:''}</div></div>`).join('')}</div>`;
 }
 function advancedEntries(q) {
   const items = props().filter(p => p.scope.startsWith('Unlock: ') || p.scope.startsWith('Codex: '));
@@ -317,7 +375,7 @@ function catalogPage() {
 function progressPage() {
   const p=progressProps(), challenge=state.save.flags;
   const groups=new Map(); for(const x of p){const g=x.scope||'GENERAL';groups.set(g,[...(groups.get(g)||[]),x]);}
-  return `<div class="page-body">${pageIntro('Profile','Progress and challenges','Edit recognized progress counters and challenge flags. Unknown fields keep their saved names.')}
+  return `<div class="page-body">${pageIntro('Profile','Progress and challenges','Edit recognized progress counters and challenge flags. Unknown fields keep their saved names.')}<div class="warning-strip"><span>${icon('warn')}</span><div><b>Edit at your own risk</b><small>Progress and challenge values are written into the save as found. Unusual or unsupported values may affect save stability; keep a backup before saving.</small></div></div>
     <div class="progress-grid"><section class="panel progress-main"><div class="panel-head"><div><span class="section-code">Numeric fields</span><h2>Progress counters</h2></div><span class="tiny-label">${p.length} RECOGNIZED</span></div>${p.length?[...groups.entries()].map(([g,items])=>`<div class="property-group"><div class="group-title">${esc(g)} <span>${items.length} FIELDS</span></div>${items.map(propertyRow).join('')}</div>`).join(''):`<div class="empty-activity"><div class="empty-mark">${icon('clock')}</div><b>No named progress fields detected</b><span>Open Field Lab to inspect all recognized numeric fields.</span></div>`}</section>
     <section class="panel challenge-panel"><div class="panel-head"><div><span class="section-code">Challenges</span><h2>Challenge flags</h2></div></div>${challenge.length?challenge.map(f=>{const meta=FLAG_META[f.key]??{label:f.key,hint:''};return `<div class="flag-row"><div><b>${esc(meta.label)}</b><small>${esc(meta.hint)}${meta.hint?' · ':''}${f.count} entries${f.mixed?' · mixed values':''} <code>${esc(f.key)}</code></small></div><button class="toggle ${f.enabled?'on':''}" data-flag="${esc(f.key)}" aria-label="Toggle ${esc(meta.label)}"><i></i></button></div>`;}).join(''):'<div class="empty-inline">No supported challenge flag groups were found.</div>'}<div class="warning-note"><b>FIELD NOTE</b><span>These labels come from save property names. Their in-game meaning can vary by build.</span></div></section></div></div>`;
 }
@@ -350,14 +408,14 @@ function labPage() {
 }
 function modalHtml() {
   if(state.modal?.type==='backups'){
-    return `<div class="modal-backdrop" data-action="dismiss"><section class="modal backups-modal" role="dialog" aria-modal="true"><div class="modal-kicker">SAFETY</div><h2>Backups</h2><p>A backup is made automatically every time you save. You can also snapshot the file right now, and restore any backup if something goes wrong.</p><button class="button button-primary" data-action="create-backup">Create backup now</button><div class="backup-list">${state.backups.length?state.backups.map(b=>`<div class="backup-row"><div><b>${esc(b.label)}</b><small>${esc(b.modified_at)} · ${fmt(b.size)} bytes</small></div><button class="button button-quiet" data-action="restore-backup" data-filename="${esc(b.filename)}">Restore</button></div>`).join(''):'<div class="empty-inline">No backups yet for this save.</div>'}</div><div class="modal-actions"><button class="button button-quiet" data-action="cancel-modal">Close</button></div><div class="modal-foot">Restoring first backs up whatever is currently on disk, so a bad restore is never permanent.</div></section></div>`;
+    return `<div class="modal-backdrop" data-action="dismiss"><section class="modal backups-modal" role="dialog" aria-modal="true"><div class="modal-kicker">SAFETY</div><h2>Backups</h2><p>A backup is made automatically every time you save. You can also snapshot the file right now, and restore any backup if something goes wrong.</p><div class="backup-toolbar"><button class="button button-primary" data-action="create-backup">Create backup now</button><button class="button button-danger" data-action="clear-older-backups" ${state.backups.length>1?'':'disabled'}>Clear older backups</button></div><div class="backup-list">${state.backups.length?state.backups.map(b=>`<div class="backup-row"><div><b>${esc(b.label)}</b><small>${esc(b.modified_at)} · ${fmt(b.size)} bytes</small></div><div class="backup-actions"><button class="button button-quiet" data-action="restore-backup" data-filename="${esc(b.filename)}">Restore</button><button class="button button-danger" data-action="delete-backup" data-filename="${esc(b.filename)}" aria-label="Delete backup ${esc(b.label)}">Delete</button></div></div>`).join(''):'<div class="empty-inline">No backups yet for this save.</div>'}</div><div class="modal-actions"><button class="button button-quiet" data-action="cancel-modal">Close</button></div><div class="modal-foot">Restoring first backs up whatever is currently on disk. “Clear older backups” keeps the newest backup and permanently deletes the rest.</div></section></div>`;
   }
   if(state.modal?.type==='edit'){
     const p=props().find(x=>x.value_at===state.modal.offset);
     return `<div class="modal-backdrop" data-action="dismiss"><section class="modal" role="dialog" aria-modal="true"><div class="modal-kicker">FIELD VALUE / ${esc(p?.type_name??'PROPERTY')}</div><h2>Edit ${esc(p?.name??'value')}</h2><p>${esc(p?.scope||'Global save field')} · offset 0x${Number(p?.value_at??0).toString(16).toUpperCase()}</p><label>New value<input id="edit-value" type="number" value="${esc(p?.value??'')}" required></label><div class="modal-actions"><button class="button button-quiet" data-action="cancel-modal">Cancel</button><button class="button button-primary" data-action="confirm-edit">Stage value</button></div><div class="modal-foot">The value stays in memory until you save the edited file.</div></section></div>`;
   }
   if(state.modal?.type==='save-confirm'){
-    return `<div class="modal-backdrop" data-action="dismiss"><section class="modal risk-modal" role="dialog" aria-modal="true"><div class="modal-kicker">SAVE FILE SAFETY</div><h2>Overwrite this save?</h2><p>This writes your staged changes over <b>${esc(state.save?.filename??'the current save')}</b>. The editor will create a timestamped backup beside the original first, but an invalid edit can still make the game reject the save.</p><div class="risk-banner risk-banner-compact"><span>${icon('warn')}</span><div><b>Check before continuing</b><span>Close the game first. Keep the backup until you have confirmed the edited save loads correctly.</span></div></div><div class="modal-actions"><button class="button button-quiet" data-action="cancel-modal">Go back</button><button class="button button-danger" data-action="confirm-save">Create backup and overwrite</button></div></section></div>`;
+    return `<div class="modal-backdrop" data-action="dismiss"><section class="modal risk-modal" role="dialog" aria-modal="true"><div class="modal-kicker">SAVE FILE SAFETY</div><h2>Overwrite this save?</h2><p>This writes your staged changes over <b>${esc(state.save?.filename??'the current save')}</b>. The editor will create a timestamped backup beside the original first, but an invalid edit can still make the game reject the save.</p><div class="risk-banner risk-banner-compact"><span>${icon('warn')}</span><div><b>Check before continuing</b><span>Close the game first. Keep the backup until you have confirmed the edited save loads correctly.</span></div></div><div class="modal-actions"><button class="button button-quiet" data-action="cancel-modal">Go back</button><button class="button button-danger" data-action="confirm-save">${icon('save')} Update Save</button></div></section></div>`;
   }
   if(state.modal?.type==='risk-add'){
     const obsIndex=state.modal.observation??0;
@@ -389,6 +447,29 @@ async function replaceTemplate(observationIndex) {
   state.modal={type:'replace-confirm',observationIndex,targetIndex};render();
 }
 
+function maxTrinketEdits(stone) {
+  const scope=`Stone ${stone.index}`;
+  const property=name=>props().find(p=>p.scope===scope&&p.name===name&&p.editable&&p.value_at!==null);
+  const edits=[];
+  for(const name of ['Lvl','R']){
+    const p=property(name);
+    if(p)edits.push({offset:p.value_at,value:6});
+  }
+  // Magnitude is stored in tenths of a percentage point (e.g. 200 = 20.0%).
+  // Apply +7 percentage points for each rank gained, yielding +35 points from
+  // rank 1 to rank 6. Base roll and all other trinket fields stay untouched.
+  const rank=Math.max(1,Math.min(6,Number(stone.rank)||1));
+  const magnitude=property('M');
+  if(magnitude&&rank<6){
+    const current=Number(magnitude.value);
+    const boosted=Math.round(current+(6-rank)*70);
+    if(Number.isSafeInteger(boosted)&&boosted>=-2147483648&&boosted<=2147483647){
+      edits.push({offset:magnitude.value_at,value:boosted});
+    }
+  }
+  return edits;
+}
+
 function bind() {
   document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{state.page=b.dataset.page;state.search='';render();});
   document.querySelectorAll('[data-action]').forEach(b=>b.onclick=async e=>{
@@ -416,7 +497,25 @@ function bind() {
     if(a==='undo') await act('undo',{},'Unsaved edits reverted.');
     if(a==='open-backups'){try{state.backups=await invoke('list_backups');}catch(err){toast(String(err),true);state.backups=[];}state.modal={type:'backups'};render();}
     if(a==='create-backup'){try{await invoke('create_backup');state.backups=await invoke('list_backups');toast('Backup created.');render();}catch(err){toast(String(err),true);}}
+    if(a==='delete-backup'){const filename=b.dataset.filename;if(!filename||!confirm(`Permanently delete backup "${filename}"?`))return;try{await invoke('delete_backup',{filename});state.backups=await invoke('list_backups');render();toast('Backup deleted.');}catch(err){toast(String(err),true);}}
+    if(a==='clear-older-backups'){if(state.backups.length<2)return;if(!confirm(`Permanently delete ${state.backups.length-1} older backup(s)? The newest backup will be kept.`))return;try{const count=await invoke('clear_older_backups');state.backups=await invoke('list_backups');render();toast(`${count} older backup${count===1?'':'s'} deleted. The newest backup was kept.`);}catch(err){toast(String(err),true);}}
     if(a==='restore-backup'){const filename=b.dataset.filename;if(!confirm(`Restore "${filename}"? The current file on disk will be backed up first.`))return;try{state.save=await invoke('restore_backup',{filename});state.modal=null;toast('Backup restored.');render();}catch(err){toast(String(err),true);}}
+    if(a==='max-trinket'){
+      const stone=state.save?.stones.find(s=>s.index===Number(b.dataset.index));
+      if(!stone){toast('Select a trinket first.',true);return;}
+      const edits=maxTrinketEdits(stone);
+      if(!edits.length){toast('This trinket has no editable level or rank fields.',true);return;}
+      stage(edits);await flushStage();
+      toast('Trinket set to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained.');
+    }
+    if(a==='max-all-trinkets'){
+      const stones=state.save?.stones??[];
+      if(!stones.length){toast('No owned trinkets to update.',true);return;}
+      const edits=stones.flatMap(maxTrinketEdits);
+      if(!edits.length){toast('No editable trinket fields were found.',true);return;}
+      stage(edits);await flushStage();
+      toast(`Set ${stones.length} trinket(s) to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained. Base roll and all other fields were left unchanged.`);
+    }
     if(a==='export-trinket'){try{await invoke('export_trinket',{index:Number(b.dataset.index)});toast('Trinket exported.');}catch(err){toast(String(err),true);}}
     if(a==='replace-observed'){const index=Number(b.dataset.observation);if(Number.isInteger(index))await replaceTemplate(index);}
     if(a==='open-add'){if(!state.save?.stones.length){toast('Earn at least one trinket first; this save has no record to clone.',true);return;}const selectedChoice=stoneChoices.findIndex(c=>c.index===state.expandedObservation);state.modal={type:'risk-add',observation:selectedChoice>=0?selectedChoice:0};render();}
@@ -457,7 +556,6 @@ function bind() {
   document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const offset=Number(b.dataset.step);const input=document.querySelector(`[data-value="${offset}"]`);if(!input)return;const prop=props().find(p=>p.value_at===offset);const raw=input.value.trim();if(raw===''){input.value=prop?.value??input.defaultValue;toast('A value is required.',true);return;}const current=Number(raw);if(!Number.isSafeInteger(current)){input.value=prop?.value??input.defaultValue;toast('Enter a whole number.',true);return;}const min=input.min===''?Number.MIN_SAFE_INTEGER:Number(input.min);const max=input.max===''?Number.MAX_SAFE_INTEGER:Number(input.max);const value=Math.max(min,Math.min(max,current+Number(b.dataset.delta)));input.value=String(value);stage([{offset,value}]);});
   document.querySelectorAll('[data-value]').forEach(input=>input.onchange=()=>{const offset=Number(input.dataset.value);const prop=props().find(p=>p.value_at===offset);if(!prop)return;const raw=input.value.trim();const value=Number(raw);const min=input.min===''?Number.MIN_SAFE_INTEGER:Number(input.min);const max=input.max===''?Number.MAX_SAFE_INTEGER:Number(input.max);if(raw===''||!Number.isSafeInteger(value)||value<min||value>max){toast('Enter a valid whole number within the allowed range.',true);input.value=prop.value;return;}if(prop.scope==='Currencies'&&value<1){toast('Currency values must be at least 1.',true);input.value=prop.value;return;}stage([{offset,value}]);});
   document.querySelectorAll('[data-bool]').forEach(b=>b.onclick=()=>{const offset=Number(b.dataset.bool);const p=props().find(x=>x.value_at===offset);if(!p)return;const next=Number(p.value)===0;stage([{offset,value:next}]);});
-  document.querySelectorAll('[data-bytebool]').forEach(b=>b.onclick=()=>{const offset=Number(b.dataset.bytebool);const p=props().find(x=>x.value_at===offset);if(!p)return;const next=Number(p.value)===0?1:0;stage([{offset,value:next}]);});
   document.querySelectorAll('[data-flag]').forEach(b=>b.onclick=()=>{const f=state.save.flags.find(x=>x.key===b.dataset.flag);if(!f)return;const edits=f.offsets.map(offset=>({offset,value:!f.enabled}));stage(edits);});
   for(const id of ['stone-search','lab-search','catalog-search','unlocks-search']){const input=document.querySelector(`#${id}`);if(input)input.oninput=()=>{const pos=input.selectionStart;state.search=input.value;render();const again=document.querySelector(`#${id}`);again?.focus();again?.setSelectionRange(pos,pos);};}
   document.querySelector('#edit-value')?.focus();
@@ -467,7 +565,12 @@ let stageTimer=null;
 const pendingEdits=new Map();
 const stageWaiters=[];
 function stage(edits){
-  for(const edit of edits)pendingEdits.set(edit.offset,edit);
+  for(const edit of edits){
+    const prop=edit.tag_at!=null&&edit.type_name?edit:props().find(p=>p.value_at===edit.offset&&p.editable&&p.tag_at!=null);
+    if(!prop){toast(`Could not match the saved property at offset 0x${Number(edit.offset).toString(16).toUpperCase()}.`,true);continue;}
+    pendingEdits.set(edit.offset,{offset:edit.offset,tag_at:prop.tag_at,type_name:prop.type_name,value:edit.value});
+  }
+  if(!pendingEdits.size)return;
   clearTimeout(stageTimer);
   stageTimer=setTimeout(()=>flushStage(),110);
 }

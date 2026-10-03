@@ -134,6 +134,8 @@ fn observation_from_block(block: &[u8]) -> Result<StoneObservation, String> {
 #[derive(Deserialize)]
 struct Edit {
     offset: usize,
+    tag_at: usize,
+    type_name: String,
     value: Value,
 }
 
@@ -523,8 +525,9 @@ impl LoadedSave {
         let mut changes = Vec::new();
         let mut touched = Vec::new();
         for edit in unique {
-            let property_index = self.properties.iter().position(|p| p.value_at == Some(edit.offset) && p.editable)
-                .ok_or_else(|| format!("Offset 0x{:08X} is not a recognized editable field.", edit.offset))?;
+            let property_index = self.properties.iter().position(|p| {
+                p.value_at == Some(edit.offset) && p.tag_at == edit.tag_at && p.type_name == edit.type_name && p.editable
+            }).ok_or_else(|| format!("Field at offset 0x{:08X} no longer matches the selected property.", edit.offset))?;
             let prop = self.properties[property_index].clone();
             let old = prop.value.clone();
             write_property(&mut updated, &prop, &edit.value)?;
@@ -613,7 +616,7 @@ impl LoadedSave {
         let (Some(count_at), Some(size_at), Some(struct_size_at), Some(array_end)) = (self.stone_count_at, self.stone_array_size_at, self.stone_struct_size_at, self.stone_end) else { return Err("Stone array size metadata was not validated; adding is disabled.".into()); };
         let StoneObservation { id, stone_set, level, rank, shape, base_roll, magnitude, secondary, foil } = observation;
         if id.is_empty() || stone_set.is_empty() || id.len() > 128 || stone_set.len() > 128 || id.contains('\0') || stone_set.contains('\0') { return Err("Use short, plain-text stone IDs and sets.".into()); }
-        if foil.is_some_and(|v| v > 1) { return Err("Unknown flag must be 0 or 1.".into()); }
+        if foil.is_some_and(|value| value > 1) { return Err("F must be 0 or 1.".into()); }
         let template = self.stones.iter().find(|s| s.index == template_index).cloned().ok_or("Choose an existing stone as the clone template.")?;
         let mut block = self.data[template.start..template.end].to_vec();
         patch_fstring_field(&mut block, "ID", "NameProperty", &id)?;
@@ -708,7 +711,7 @@ impl LoadedSave {
             write_property(&mut updated, p, &value)?;
         }
         if let Some(foil) = template.get("F").and_then(Value::as_u64) {
-            if foil > 1 { return Err("Template F value must be 0 or 1.".into()); }
+            if foil > 1 { return Err("Template F must be 0 or 1.".into()); }
             let p = self.properties.iter().find(|p| p.scope == scope && p.name == "F" && p.type_name == "ByteProperty").ok_or("This slot has no compatible F field.")?;
             write_property(&mut updated, p, &json!(foil))?;
         }
@@ -825,6 +828,35 @@ impl LoadedSave {
         }
         out.sort_by(|a, b| b.filename.cmp(&a.filename));
         Ok(out)
+    }
+
+    fn delete_backup(&self, filename: &str) -> Result<(), String> {
+        let dir = self.path.parent().ok_or("Save has no parent directory.")?;
+        let name = self.path.file_name().and_then(|n| n.to_str()).unwrap_or("save.sav");
+        let prefix = format!("{name}.bak_");
+        let candidate = std::path::Path::new(filename);
+        if candidate.file_name().and_then(|n| n.to_str()) != Some(filename) || !filename.starts_with(&prefix) {
+            return Err("That file is not a backup for the currently open save.".into());
+        }
+        let backup = dir.join(filename);
+        let metadata = fs::symlink_metadata(&backup).map_err(|e| format!("Could not inspect backup: {e}"))?;
+        if !metadata.file_type().is_file() {
+            return Err("Only backup files can be deleted.".into());
+        }
+        fs::remove_file(&backup).map_err(|e| format!("Could not delete backup: {e}"))
+    }
+
+    fn clear_older_backups(&self) -> Result<usize, String> {
+        let mut backups = self.list_backups()?;
+        if backups.len() < 2 { return Ok(0); }
+        // Backup names contain sortable timestamps; preserve the newest one.
+        backups.sort_by(|a, b| b.filename.cmp(&a.filename));
+        let mut deleted = 0;
+        for backup in backups.iter().skip(1) {
+            self.delete_backup(&backup.filename)?;
+            deleted += 1;
+        }
+        Ok(deleted)
     }
 
     fn validate(&self) -> Result<(), String> {
@@ -951,6 +983,16 @@ fn create_backup(state: State<'_, AppState>) -> Result<BackupInfo, String> {
 }
 
 #[tauri::command]
+fn delete_backup(state: State<'_, AppState>, filename: String) -> Result<(), String> {
+    state.0.lock().map_err(|_| "Save state lock failed.")?.as_ref().ok_or("Open a save first.")?.delete_backup(&filename)
+}
+
+#[tauri::command]
+fn clear_older_backups(state: State<'_, AppState>) -> Result<usize, String> {
+    state.0.lock().map_err(|_| "Save state lock failed.")?.as_ref().ok_or("Open a save first.")?.clear_older_backups()
+}
+
+#[tauri::command]
 fn restore_backup(state: State<'_, AppState>, filename: String) -> Result<Snapshot, String> {
     let mut guard = state.0.lock().map_err(|_| "Save state lock failed.")?;
     let current = guard.as_ref().ok_or("Open a save first.")?;
@@ -964,7 +1006,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .manage(AppState::default())
-        .invoke_handler(tauri::generate_handler![open_save, open_save_path, import_stone_catalog, import_exported_trinket, stage_edits, replace_stone, add_stone, remove_stone, export_trinket, set_trinket_rarity, undo, save_changes, current_snapshot, list_backups, create_backup, restore_backup])
+        .invoke_handler(tauri::generate_handler![open_save, open_save_path, import_stone_catalog, import_exported_trinket, stage_edits, replace_stone, add_stone, remove_stone, export_trinket, set_trinket_rarity, undo, save_changes, current_snapshot, list_backups, create_backup, delete_backup, clear_older_backups, restore_backup])
         .run(tauri::generate_context!())
         .expect("error while running Shatterverse Save Editor");
 }
@@ -1003,7 +1045,7 @@ fn parse_property(data: &[u8], at: usize) -> Option<Property> {
     let mut value_at = None; let mut value = Value::Null; let mut editable = false;
     match ty.as_str() {
         "BoolProperty" => { value_at = Some(payload); value = json!(data[payload]); editable = data[payload] == 0 || data[payload] == 16; }
-        "ByteProperty" => { let at = payload.checked_add(5)?; let n = *data.get(at)?; value_at = Some(at); value = json!(n); editable = n <= 1; }
+        "ByteProperty" => { let at = payload.checked_add(5)?; let n = *data.get(at)?; value_at = Some(at); value = json!(n); editable = name == "F" || n <= 1; }
         "IntProperty" => { let guid = *data.get(payload)?; if guid > 1 { return None; } let at = payload + 1 + if guid == 1 {16} else {0}; let n = get_i32(data, at)?; value_at=Some(at); value=json!(n); editable=true; }
         "UInt32Property" => { let guid=*data.get(payload)?; if guid>1{return None;} let at=payload+1+if guid==1{16}else{0};let n=get_u32(data,at)?;value_at=Some(at);value=json!(n);editable=true; }
         "Int64Property" => { let guid=*data.get(payload)?;if guid>1{return None;}let at=payload+1+if guid==1{16}else{0};let n=get_i64(data,at)?;value_at=Some(at);value=json!(n);editable=true; }

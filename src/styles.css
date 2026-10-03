@@ -142,6 +142,10 @@
 .backup-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid #343a3d}
 .backup-row b{font-size:10px;word-break:break-all}
 .backup-row small{display:block;color:#798385;font-size:9px;margin-top:3px}
+.backup-toolbar,.backup-actions{display:flex;align-items:center;gap:7px}
+.backup-toolbar{justify-content:space-between;margin-top:10px}
+.backup-actions{flex-shrink:0}
+.backup-actions .button,.backup-toolbar .button{min-height:29px;padding:0 9px}
 
 body.drag-over{position:relative}
 body.drag-over:after{content:"Drop .sav or .trinket file";position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:#0a0d0ecc;color:var(--ember);font:700 20px var(--display);text-transform:uppercase;letter-spacing:1px;border:3px dashed var(--ember);pointer-events:none}

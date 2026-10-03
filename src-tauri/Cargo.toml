@@ -1,6 +1,6 @@
 [package]
 name = "shatterverse-save-editor"
-version = "0.3.0"
+version = "0.4.9"
 description = "Desktop save editor for Serious Sam: Shatterverse"
 authors = ["Shatterverse Save Editor contributors"]
 edition = "2021"
