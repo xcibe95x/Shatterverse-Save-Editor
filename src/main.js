@@ -190,7 +190,7 @@ function render() {
         <div class="rail-label">EDIT SAVE</div>
         <nav>${nav.map(([id, ic, text]) => `<button class="nav-item ${state.page===id?'active':''}" data-page="${id}"><span class="nav-icon">${icon(ic)}</span>${text}${id==='stones'&&s?`<em>${s.stones.length}</em>`:''}</button>`).join('')}</nav>
         <div class="rail-spacer"></div>
-        <div class="rail-foot"><span>LOCAL SAVE · V0.4.9 BETA · XCIBE95X</span><a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a></div>
+        <div class="rail-foot"><span>LOCAL SAVE · V0.4.10 BETA · XCIBE95X</span><a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a></div>
       </aside>
       <main class="main">
         <header class="topbar"><div class="crumb"><span class="crumb-root">SAVE</span><b>/</b><strong>${esc(nav.find(x=>x[0]===state.page)?.[2]??'Currencies')}</strong><span class="crumb-file">${s?esc(s.filename):'No save loaded'}</span></div><div class="top-actions">${s?`<span class="save-state ${s.has_unsaved_changes?'pending':''}">${s.has_unsaved_changes?'CHANGES PENDING':'SAVE LOADED'}</span>${s.has_unsaved_changes?'<button class="button button-quiet" data-action="undo">Revert</button>':''}<button class="button button-quiet" data-action="open-backups">Backups</button>`:''}<button class="button button-quiet" data-action="open">Open save</button><button class="button button-save" data-action="save" ${!s?.has_unsaved_changes?'disabled':''}>Save changes <span>↗</span></button></div></header>
@@ -284,7 +284,8 @@ function codexGroups() {
   return entries.sort((a, b) => a.id.localeCompare(b.id));
 }
 function unlockRow(item) {
-  const unlocked = !item.bl || Number(item.bl.value) !== 0;
+  // In these unlock records bL is the locked flag: zero means unlocked.
+  const unlocked = !item.bl || Number(item.bl.value) === 0;
   return `<div class="unlock-row"><div class="unlock-id">${icon(unlocked?'unlock':'lock', unlocked?'unlocked':'locked')}<b>${esc(item.id)}</b></div>${item.sp?`<div class="unlock-stack"><small>Stack level</small><input class="property-input" data-value="${item.sp.value_at}" value="${esc(item.sp.value)}" type="number" step="1" required></div>`:''}${item.bl?`<button class="toggle ${unlocked?'on':''}" data-bool="${item.bl.value_at}" aria-label="Unlocked: ${esc(item.id)}" aria-pressed="${unlocked}"><i></i></button>`:'<span class="readout">No unlock flag found</span>'}</div>`;
 }
 function challengeRow(entry) {

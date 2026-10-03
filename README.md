@@ -1,12 +1,13 @@
 # Serious Sam: Shatterverse Save Editor
 
-A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.4.9 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
+A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.4.10 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
 
 ## What the app can do
 
 - Open a `.sav` file and inspect its recognized Unreal GVAS properties.
 - Edit currency values already present in the save. Values must be at least 1. A missing currency is shown as unavailable; earn it in-game, then reopen the save before editing it.
 - View and change recognized character, weapon, Intel, Codex, challenge, and progression values. The Field Lab lists recognized fields with their stored type and offset; raw edits are marked unsafe.
+- Sam, weapon, and Intel unlock toggles interpret the saved `bL` locked flag correctly: `0` means unlocked and `1` means locked.
 - Browse owned trinkets, inspect their rarity, rank, level, magnitude, base roll, shape, and decoded secondary stats, and edit the fields the parser recognizes.
 - Max one or all owned trinkets to Level 6 and Rank 6. Magnitude increases by 7 percentage points per rank gained. Base roll and all other fields are unchanged.
 - Change the rarity suffix for compatible trinkets and replace an existing owned slot with a compatible observation from the Workshop.
