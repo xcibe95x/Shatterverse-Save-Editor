@@ -1,0 +1,1100 @@
+[
+  {
+    "ID": "WeaponReload_C",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 3,
+    "B": 26,
+    "M": 75,
+    "SecS": {
+      "MachineGunFamilyBash_C": 199,
+      "PistolFamilyBash_C": 199,
+      "MachineGunFamilySpread_C": -59,
+      "MovementSpeed_C": 9,
+      "PistolFamilyRoF_C": 19,
+      "ExperimentalFamilyDamage_C": 19
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherThreshold_E",
+    "Set": "CritChance",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 1,
+    "B": 22,
+    "M": 59,
+    "SecS": {
+      "HeavyFamilyDamage_E": 79,
+      "ShotgunFamilyBash_E": 799,
+      "RandomPistol": 1,
+      "Health_E": 79,
+      "MachineGunFamilyDamage_E": 79,
+      "PistolFamilySpread_E": -119
+    },
+    "F": 0
+  },
+  {
+    "ID": "ArmoredUp_C",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 5,
+    "B": 24,
+    "M": 75,
+    "SecS": {
+      "PistolFamilyDamage_C": 19,
+      "MachineGunFamilyRoF_C": 19,
+      "SpecialFamilyBash_C": 199,
+      "MachineGunFamilyBash_C": 199,
+      "ExperimentalFamilyDamage_C": 19,
+      "HeavyFamilyDamage_C": 19
+    },
+    "F": 0
+  },
+  {
+    "ID": "Healthy_E",
+    "Set": "BoonXP",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 5,
+    "B": 21,
+    "M": 275,
+    "SecS": {
+      "PistolFamilyRoF_E": 79,
+      "ExperimentalFamilyRoF_E": 79,
+      "MovementSpeed_E": 39,
+      "SpecialFamilyRoF_E": 79,
+      "MachineGunFamilyBash_E": 799,
+      "HeavyFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponDamage_E",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 2,
+    "B": 26,
+    "M": 275,
+    "SecS": {
+      "HeavyFamilyRoF_E": 79,
+      "PistolFamilyRoF_E": 79,
+      "SpecialFamilyRoF_E": 79,
+      "SpecialFamilyBash_E": 799,
+      "ExperimentalFamilyRoF_E": 79,
+      "Health_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_R",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 4,
+    "B": 23,
+    "M": -300,
+    "SecS": {
+      "Reroll_R": 1999,
+      "MovementSpeed_R": 29,
+      "RandomChainBoon": 1,
+      "ExperimentalFamilyRoF_R": 59,
+      "MachineGunFamilyBash_R": 600,
+      "MachineGunFamilySpread_R": -99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponAoEDamage_L",
+    "Set": "BoonXP",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 3,
+    "B": 21,
+    "M": 349,
+    "SecS": {
+      "Health_L": 99,
+      "RandomSpecial": 1,
+      "RandomHeavy": 1,
+      "ExperimentalFamilyRoF_L": 99,
+      "MovementSpeed_L": 49,
+      "PistolFamilySpread_L": -139
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_U",
+    "Set": "CritChance",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 4,
+    "B": 25,
+    "M": -199,
+    "SecS": {
+      "MachineGunFamilySpread_U": -79,
+      "ExperimentalFamilyRoF_U": 39,
+      "PistolFamilyRoF_U": 39,
+      "ShotgunFamilyDamage_U": 39,
+      "PistolFamilySpread_U": -79,
+      "Reroll_U": 1999
+    },
+    "F": 0
+  },
+  {
+    "ID": "AlienWeapon",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 6,
+    "B": 24,
+    "M": 1,
+    "SecS": {
+      "ShotgunFamilyRoF_R": 59,
+      "MachineGunFamilyDamage_R": 59,
+      "PistolFamilyRoF_R": 59,
+      "DualWieldBoon": 1,
+      "RandomChainBoon": 1,
+      "Armor_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "SammyUltDamage_E",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 6,
+    "B": 25,
+    "M": 275,
+    "SecS": {
+      "ShotgunFamilyRoF_E": 79,
+      "Reroll_E": 3999,
+      "MovementSpeed_E": 39,
+      "RandomPistol": 1,
+      "MachineGunFamilyRoF_E": 79,
+      "ShotgunFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "MovementSpeed_E",
+    "Set": "BoonXP",
+    "Lvl": 5,
+    "R": 5,
+    "Sh": 5,
+    "B": 23,
+    "M": 150,
+    "SecS": {
+      "SpecialFamilyRoF_E": 79,
+      "PistolFamilySpread_E": -119,
+      "RandomExperimental": 1,
+      "SpecialFamilyDamage_E": 79,
+      "MovementSpeed_E": 39,
+      "ExperimentalFamilyDamage_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherThreshold_L",
+    "Set": "CBoon",
+    "Lvl": 4,
+    "R": 4,
+    "Sh": 1,
+    "B": 23,
+    "M": 75,
+    "SecS": {
+      "RandomSpecial": 1,
+      "RandomHeavy": 1,
+      "MovementSpeed_L": 49,
+      "SpecialFamilyRoF_L": 99,
+      "PistolFamilyDamage_L": 99,
+      "PistolFamilyBash_L": 999
+    },
+    "F": 0
+  },
+  {
+    "ID": "Gold_L",
+    "Set": "DashCD",
+    "Lvl": 4,
+    "R": 4,
+    "Sh": 4,
+    "B": 24,
+    "M": 850,
+    "SecS": {
+      "RandomHeavy": 1,
+      "SpecialFamilyRoF_L": 99,
+      "SpecialFamilyBash_L": 999,
+      "RandomSpecial": 1,
+      "SpecialFamilyDamage_L": 99,
+      "PistolFamilySpread_L": -139
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponDamage_R",
+    "Set": "CBoon",
+    "Lvl": 5,
+    "R": 5,
+    "Sh": 2,
+    "B": 23,
+    "M": 199,
+    "SecS": {
+      "SpecialFamilyDamage_R": 59,
+      "HeavyFamilyDamage_R": 59,
+      "DualWieldBoon": 1,
+      "PistolFamilyDamage_R": 59,
+      "PistolFamilyBash_R": 600,
+      "ExperimentalFamilyDamage_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponReload_L",
+    "Set": "CritChance",
+    "Lvl": 4,
+    "R": 4,
+    "Sh": 3,
+    "B": 25,
+    "M": 349,
+    "SecS": {
+      "Armor_L": 99,
+      "HeavyFamilyBash_L": 999,
+      "MachineGunFamilyRoF_L": 99,
+      "ExperimentalFamilyBash_L": 999,
+      "PistolFamilyRoF_L": 99,
+      "SpecialFamilyBash_L": 999
+    },
+    "F": 0
+  },
+  {
+    "ID": "SammyUltDamage_L",
+    "Set": "CritChance",
+    "Lvl": 4,
+    "R": 4,
+    "Sh": 6,
+    "B": 25,
+    "M": 349,
+    "SecS": {
+      "RandomSpecial": 1,
+      "Armor_L": 99,
+      "MachineGunFamilyBash_L": 999,
+      "HeavyFamilyBash_L": 999,
+      "ShotgunFamilyRoF_L": 99,
+      "PistolFamilyRoF_L": 99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponRoF_L",
+    "Set": "ElementalChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 2,
+    "B": 25,
+    "M": 349,
+    "SecS": {
+      "SpecialFamilyRoF_L": 99,
+      "ExperimentalFamilyBash_L": 999,
+      "RandomHeavy": 1,
+      "MovementSpeed_L": 49,
+      "RandomSpecial": 1,
+      "Armor_L": 99
+    },
+    "F": 0
+  },
+  {
+    "ID": "Healthy_E",
+    "Set": "DashCD",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 23,
+    "M": 275,
+    "SecS": {
+      "MachineGunFamilyBash_E": 799,
+      "HeavyFamilyBash_E": 799,
+      "SpecialFamilyDamage_E": 79,
+      "SpecialFamilyRoF_E": 79,
+      "HeavyFamilyRoF_E": 79,
+      "ExperimentalFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "HeatDuration_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 3,
+    "B": 22,
+    "M": 349,
+    "SecS": {
+      "ShotgunFamilyDamage_L": 99,
+      "RandomSpecial": 1,
+      "HeavyFamilyDamage_L": 99,
+      "SpecialFamilyRoF_L": 99,
+      "RandomHeavy": 1,
+      "Armor_L": 99
+    },
+    "F": 0
+  },
+  {
+    "ID": "Healthy_E",
+    "Set": "ElementalChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 21,
+    "M": 275,
+    "SecS": {
+      "ExperimentalFamilyDamage_E": 79,
+      "PistolFamilyRoF_E": 79,
+      "ExperimentalFamilyBash_E": 799,
+      "Armor_E": 79,
+      "MovementSpeed_E": 39,
+      "HeavyFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "HeatDuration_E",
+    "Set": "ElementalChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 22,
+    "M": 275,
+    "SecS": {
+      "RandomMachineGun": 1,
+      "RandomShotgun": 1,
+      "ExperimentalFamilyBash_E": 799,
+      "PistolFamilyDamage_E": 79,
+      "RandomExperimental": 1,
+      "HeavyFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "HeatDuration_E",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 24,
+    "M": 275,
+    "SecS": {
+      "HeavyFamilyRoF_E": 79,
+      "HeavyFamilyBash_E": 799,
+      "MachineGunFamilyBash_E": 799,
+      "ExperimentalFamilyRoF_E": 79,
+      "ShotgunFamilyDamage_E": 79,
+      "MachineGunFamilyDamage_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_E",
+    "Set": "CBoon",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 4,
+    "B": 21,
+    "M": -399,
+    "SecS": {
+      "MachineGunFamilyBash_E": 799,
+      "RandomPistol": 1,
+      "RandomShotgun": 1,
+      "RandomExperimental": 1,
+      "PistolFamilyDamage_E": 79,
+      "ShotgunFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_E",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 4,
+    "B": 23,
+    "M": -399,
+    "SecS": {
+      "RandomShotgun": 1,
+      "MachineGunFamilyBash_E": 799,
+      "SpecialFamilyRoF_E": 79,
+      "HeavyFamilyBash_E": 799,
+      "MachineGunFamilySpread_E": -119,
+      "HeavyFamilyDamage_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "Gold_E",
+    "Set": "ArmorHealth",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 4,
+    "B": 23,
+    "M": 650,
+    "SecS": {
+      "Reroll_E": 3999,
+      "SpecialFamilyDamage_E": 79,
+      "MachineGunFamilySpread_E": -119,
+      "PistolFamilyRoF_E": 79,
+      "MovementSpeed_E": 39,
+      "SpecialFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherThreshold_E",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 1,
+    "B": 22,
+    "M": 59,
+    "SecS": {
+      "ExperimentalFamilyRoF_E": 79,
+      "Reroll_E": 3999,
+      "MachineGunFamilyBash_E": 799,
+      "PistolFamilySpread_E": -119,
+      "ExperimentalFamilyBash_E": 799,
+      "MachineGunFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "ModernUltD_L",
+    "Set": "ArmorHealth",
+    "Lvl": 4,
+    "R": 4,
+    "Sh": 6,
+    "B": 21,
+    "M": 349,
+    "SecS": {
+      "RandomHeavy": 1,
+      "RandomSpecial": 1,
+      "MachineGunFamilyDamage_L": 99,
+      "HeavyFamilyDamage_L": 99,
+      "ExperimentalFamilyRoF_L": 99,
+      "ShotgunFamilyDamage_L": 99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponAoE_R",
+    "Set": "ElementalChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 26,
+    "M": 199,
+    "SecS": {
+      "ShotgunFamilyBash_R": 600,
+      "RandomHealthBoon": 1,
+      "MovementSpeed_R": 29,
+      "RandomSymbiosisBoon": 1,
+      "ExperimentalFamilyRoF_R": 59,
+      "PistolFamilyDamage_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponRoF_R",
+    "Set": "ArmorHealth",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 2,
+    "B": 26,
+    "M": 199,
+    "SecS": {
+      "PistolFamilyRoF_R": 59,
+      "ShotgunFamilyDamage_R": 59,
+      "RandomChainBoon": 1,
+      "MachineGunFamilySpread_R": -99,
+      "MachineGunFamilyDamage_R": 59,
+      "PistolFamilyDamage_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "MovementSpeed_L",
+    "Set": "CritChance",
+    "Lvl": 5,
+    "R": 5,
+    "Sh": 5,
+    "B": 24,
+    "M": 174,
+    "SecS": {
+      "ShotgunFamilyBash_L": 999,
+      "RandomSpecial": 1,
+      "HeavyFamilyRoF_L": 99,
+      "ExperimentalFamilyDamage_L": 99,
+      "SpecialFamilyBash_L": 999,
+      "RandomHeavy": 1
+    },
+    "F": 0
+  },
+  {
+    "ID": "MovementSpeed_E",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 21,
+    "M": 150,
+    "SecS": {
+      "ExperimentalFamilyRoF_E": 79,
+      "SpecialFamilyRoF_E": 79,
+      "PistolFamilyDamage_E": 79,
+      "SpecialFamilyBash_E": 799,
+      "ExperimentalFamilyBash_E": 799,
+      "HeavyFamilyDamage_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltimateDuration_E",
+    "Set": "ArmorHealth",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 24,
+    "M": 399,
+    "SecS": {
+      "RandomShotgun": 1,
+      "HeavyFamilyRoF_E": 79,
+      "PistolFamilyRoF_E": 79,
+      "ExperimentalFamilyDamage_E": 79,
+      "ShotgunFamilyDamage_E": 79,
+      "SpecialFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherDistance_E",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 1,
+    "B": 26,
+    "M": 499999,
+    "SecS": {
+      "Reroll_E": 3999,
+      "RandomMachineGun": 1,
+      "HeavyFamilyRoF_E": 79,
+      "RandomExperimental": 1,
+      "MachineGunFamilyDamage_E": 79,
+      "MachineGunFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "AlienWeapon",
+    "Set": "DashCD",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 24,
+    "M": 1,
+    "SecS": {
+      "HeavyFamilyBash_R": 600,
+      "ExperimentalFamilyBash_R": 600,
+      "PistolFamilySpread_R": -99,
+      "ShotgunFamilyDamage_R": 59,
+      "Health_R": 59,
+      "MachineGunFamilySpread_R": -99
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherDistance_R",
+    "Set": "CBoon",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 1,
+    "B": 24,
+    "M": 349999,
+    "SecS": {
+      "MachineGunFamilyDamage_R": 59,
+      "DualWieldBoon": 1,
+      "MovementSpeed_R": 29,
+      "HeavyFamilyBash_R": 600,
+      "Armor_R": 59,
+      "HeavyFamilyDamage_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "HeatDuration_L",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 23,
+    "M": 349,
+    "SecS": {
+      "RandomSpecial": 1,
+      "RandomHeavy": 1,
+      "PistolFamilySpread_L": -139,
+      "ShotgunFamilyRoF_L": 99,
+      "PistolFamilyRoF_L": 99,
+      "HeavyFamilyDamage_L": 99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponCharge_E",
+    "Set": "DashCD",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 22,
+    "M": 275,
+    "SecS": {
+      "SpecialFamilyRoF_E": 79,
+      "HeavyFamilyBash_E": 799,
+      "RandomPistol": 1,
+      "MovementSpeed_E": 39,
+      "SpecialFamilyDamage_E": 79,
+      "PistolFamilySpread_E": -119
+    },
+    "F": 0
+  },
+  {
+    "ID": "MaxHeat_R",
+    "Set": "DashCD",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 22,
+    "M": 199,
+    "SecS": {
+      "MachineGunFamilyDamage_R": 59,
+      "RandomArmorBoon": 1,
+      "ShotgunFamilyBash_R": 600,
+      "ShotgunFamilyRoF_R": 59,
+      "ShotgunFamilyDamage_R": 59,
+      "MachineGunFamilySpread_R": -99
+    },
+    "F": 0
+  },
+  {
+    "ID": "CartoonUltExpD_R",
+    "Set": "CBoon",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 22,
+    "M": 199,
+    "SecS": {
+      "HeavyFamilyBash_R": 600,
+      "Health_R": 59,
+      "ShotgunFamilyRoF_R": 59,
+      "OverheatBoon": 1,
+      "ExperimentalFamilyDamage_R": 59,
+      "RandomArmorBoon": 1
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponCharge_E",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 21,
+    "M": 275,
+    "SecS": {
+      "RandomMachineGun": 1,
+      "Health_E": 79,
+      "Armor_E": 79,
+      "MachineGunFamilyRoF_E": 79,
+      "PistolFamilyRoF_E": 79,
+      "SpecialFamilyDamage_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponReload_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 3,
+    "B": 26,
+    "M": 3000,
+    "SecS": {
+      "MachineGunFamilyBash_C": 199,
+      "PistolFamilyBash_C": 199,
+      "MachineGunFamilySpread_C": -59,
+      "MovementSpeed_C": 9,
+      "PistolFamilyRoF_C": 19,
+      "ExperimentalFamilyDamage_C": 19
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherThreshold_L",
+    "Set": "CritChance",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 1,
+    "B": 22,
+    "M": 3000,
+    "SecS": {
+      "HeavyFamilyDamage_E": 79,
+      "ShotgunFamilyBash_E": 799,
+      "RandomPistol": 1,
+      "Health_E": 79,
+      "MachineGunFamilyDamage_E": 79,
+      "PistolFamilySpread_E": -119
+    },
+    "F": 0
+  },
+  {
+    "ID": "ArmoredUp_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 5,
+    "B": 24,
+    "M": 3000,
+    "SecS": {
+      "PistolFamilyDamage_C": 19,
+      "MachineGunFamilyRoF_C": 19,
+      "SpecialFamilyBash_C": 199,
+      "MachineGunFamilyBash_C": 199,
+      "ExperimentalFamilyDamage_C": 19,
+      "HeavyFamilyDamage_C": 19
+    },
+    "F": 0
+  },
+  {
+    "ID": "Healthy_L",
+    "Set": "BoonXP",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 5,
+    "B": 21,
+    "M": 3000,
+    "SecS": {
+      "PistolFamilyRoF_E": 79,
+      "ExperimentalFamilyRoF_E": 79,
+      "MovementSpeed_E": 39,
+      "SpecialFamilyRoF_E": 79,
+      "MachineGunFamilyBash_E": 799,
+      "HeavyFamilyRoF_E": 79
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponDamage_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 2,
+    "B": 26,
+    "M": 3000,
+    "SecS": {
+      "HeavyFamilyRoF_E": 200,
+      "PistolFamilyRoF_E": 200,
+      "SpecialFamilyRoF_E": 200,
+      "SpecialFamilyBash_E": 1000,
+      "ExperimentalFamilyRoF_E": 200,
+      "Health_E": 200
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 4,
+    "B": 23,
+    "M": -300,
+    "SecS": {
+      "Reroll_R": 1999,
+      "MovementSpeed_R": 29,
+      "RandomChainBoon": 1,
+      "ExperimentalFamilyRoF_R": 59,
+      "MachineGunFamilyBash_R": 600,
+      "MachineGunFamilySpread_R": -99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponAoEDamage_L",
+    "Set": "BoonXP",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 3,
+    "B": 21,
+    "M": 400,
+    "SecS": {
+      "Health_L": 99,
+      "RandomSpecial": 1,
+      "RandomHeavy": 1,
+      "ExperimentalFamilyRoF_L": 99,
+      "MovementSpeed_L": 49,
+      "PistolFamilySpread_L": -139
+    },
+    "F": 0
+  },
+  {
+    "ID": "UltCharge_L",
+    "Set": "CritChance",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 4,
+    "B": 25,
+    "M": -4543,
+    "SecS": {
+      "MachineGunFamilySpread_U": -79,
+      "ExperimentalFamilyRoF_U": 39,
+      "PistolFamilyRoF_U": 39,
+      "ShotgunFamilyDamage_U": 39,
+      "PistolFamilySpread_U": -79,
+      "Reroll_U": 1999
+    },
+    "F": 0
+  },
+  {
+    "ID": "AlienWeapon",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 6,
+    "B": 24,
+    "M": 5,
+    "SecS": {
+      "ShotgunFamilyRoF_R": 59,
+      "MachineGunFamilyDamage_R": 59,
+      "PistolFamilyRoF_R": 59,
+      "DualWieldBoon": 1,
+      "RandomChainBoon": 1,
+      "Armor_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "SammyUltDamage_L",
+    "Set": "ArmorHealth",
+    "Lvl": 6,
+    "R": 6,
+    "Sh": 6,
+    "B": 25,
+    "M": 3000,
+    "SecS": {
+      "ShotgunFamilyRoF_E": 79,
+      "Reroll_E": 3999,
+      "MovementSpeed_E": 39,
+      "RandomPistol": 1,
+      "MachineGunFamilyRoF_E": 79,
+      "ShotgunFamilyBash_E": 799
+    },
+    "F": 0
+  },
+  {
+    "ID": "MovementSpeed_U",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 22,
+    "M": 99,
+    "SecS": {
+      "SpecialFamilyRoF_U": 39,
+      "ShotgunFamilyRoF_U": 39,
+      "HeavyFamilyDamage_U": 39,
+      "MovementSpeed_U": 19,
+      "ExperimentalFamilyDamage_U": 39,
+      "ExperimentalFamilyBash_U": 399
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponCharge_C",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 21,
+    "M": 75,
+    "SecS": {
+      "ExperimentalFamilyBash_C": 199,
+      "MachineGunFamilyBash_C": 199,
+      "PistolFamilyBash_C": 199,
+      "HeavyFamilyBash_C": 199,
+      "PistolFamilyDamage_C": 19,
+      "HeavyFamilyRoF_C": 19
+    },
+    "F": 0
+  },
+  {
+    "ID": "HeatDuration_R",
+    "Set": "CBoon",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 24,
+    "M": 199,
+    "SecS": {
+      "ShotgunFamilyRoF_R": 59,
+      "RandomSymbiosisBoon": 1,
+      "Health_R": 59,
+      "ExperimentalFamilyBash_R": 600,
+      "OverheatBoon": 1,
+      "HeavyFamilyBash_R": 600
+    },
+    "F": 0
+  },
+  {
+    "ID": "RetroUltExpD_R",
+    "Set": "ArmorHealth",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 25,
+    "M": 199,
+    "SecS": {
+      "PistolFamilyDamage_R": 59,
+      "PistolFamilyRoF_R": 59,
+      "MachineGunFamilyDamage_R": 59,
+      "PistolFamilyBash_R": 600,
+      "RandomArmorBoon": 1,
+      "MachineGunFamilySpread_R": -99
+    },
+    "F": 0
+  },
+  {
+    "ID": "WeaponAoE_U",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 3,
+    "B": 21,
+    "M": 124,
+    "SecS": {
+      "ShotgunFamilyRoF_U": 39,
+      "MachineGunFamilyBash_U": 399,
+      "HeavyFamilyRoF_U": 39,
+      "ShotgunFamilyBash_U": 399,
+      "ExperimentalFamilyBash_U": 399,
+      "PistolFamilySpread_U": -79
+    },
+    "F": 0
+  },
+  {
+    "ID": "MovementSpeed_U",
+    "Set": "ArmorHealth",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 26,
+    "M": 99,
+    "SecS": {
+      "HeavyFamilyBash_U": 399,
+      "MachineGunFamilyDamage_U": 39,
+      "MovementSpeed_U": 19,
+      "MachineGunFamilySpread_U": -79,
+      "ShotgunFamilyDamage_U": 39,
+      "SpecialFamilyBash_U": 399
+    },
+    "F": 0
+  },
+  {
+    "ID": "RetroUltExpD_R",
+    "Set": "ElementalChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 24,
+    "M": 199,
+    "SecS": {
+      "RandomArmorBoon": 1,
+      "RandomBleedBoon": 1,
+      "Armor_R": 59,
+      "MovementSpeed_R": 29,
+      "DualWieldBoon": 1,
+      "SpecialFamilyBash_R": 600
+    },
+    "F": 0
+  },
+  {
+    "ID": "CartoonUltExpD_C",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 26,
+    "M": 75,
+    "SecS": {
+      "PistolFamilyDamage_C": 19,
+      "MachineGunFamilyDamage_C": 19,
+      "SpecialFamilyDamage_C": 19,
+      "HeavyFamilyDamage_C": 19,
+      "ExperimentalFamilyBash_C": 199,
+      "MachineGunFamilyBash_C": 199
+    },
+    "F": 0
+  },
+  {
+    "ID": "FinisherDistance_R",
+    "Set": "BoonXP",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 1,
+    "B": 24,
+    "M": 349999,
+    "SecS": {
+      "RandomBleedBoon": 1,
+      "RandomChainBoon": 1,
+      "Reroll_R": 1999,
+      "PistolFamilyDamage_R": 59,
+      "ExperimentalFamilyRoF_R": 59,
+      "Health_R": 59
+    },
+    "F": 0
+  },
+  {
+    "ID": "SammyUltDamage_C",
+    "Set": "CritChance",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 6,
+    "B": 26,
+    "M": 75,
+    "SecS": {
+      "ShotgunFamilyDamage_C": 19,
+      "MachineGunFamilyRoF_C": 19,
+      "PistolFamilyBash_C": 199,
+      "MachineGunFamilySpread_C": -59,
+      "ExperimentalFamilyRoF_C": 19,
+      "ExperimentalFamilyBash_C": 199
+    },
+    "F": 0
+  },
+  {
+    "ID": "ArmoredUp_C",
+    "Set": "DashCD",
+    "Lvl": 1,
+    "R": 1,
+    "Sh": 5,
+    "B": 26,
+    "M": 75,
+    "SecS": {
+      "PistolFamilyDamage_C": 19,
+      "HeavyFamilyRoF_C": 19,
+      "MachineGunFamilyRoF_C": 19,
+      "MovementSpeed_C": 9,
+      "SpecialFamilyRoF_C": 19,
+      "ShotgunFamilyRoF_C": 19
+    },
+    "F": 0
+  }
+]

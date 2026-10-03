@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.sav
+*.sav.*
+*.bak*
+# Keep the explicitly curated sample saves available with the project.
+!save-templates/*.sav
+*.log
+.venv/
+venv/
+.idea/
+.vscode/
+dist/
+build/
+node_modules/
+src-tauri/target/
+release/
+.env
+.DS_Store
+

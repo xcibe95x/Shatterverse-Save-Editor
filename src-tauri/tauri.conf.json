@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Shatterverse Save Editor",
+  "version": "0.3.0",
+  "identifier": "com.shatterverse.save-editor",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Shatterverse Save Editor",
+        "width": 1320,
+        "height": 780,
+        "minWidth": 980,
+        "minHeight": 620,
+        "center": true,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost http://127.0.0.1:1420 ws://127.0.0.1:1420"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "targets": [],
+    "shortDescription": "Serious Sam: Shatterverse save editor",
+    "longDescription": "Inspect and edit currencies, progress, stones, and supported save properties.",
+    "category": "Utility",
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": false,
+        "installMode": "currentUser"
+      }
+    },
+    "icon": [
+      "icons/icon.ico"
+    ]
+  }
+}
