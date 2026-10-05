@@ -190,7 +190,7 @@ function render() {
         <div class="rail-label">EDIT SAVE</div>
         <nav>${nav.map(([id, ic, text]) => `<button class="nav-item ${state.page===id?'active':''}" data-page="${id}"><span class="nav-icon">${icon(ic)}</span>${text}${id==='stones'&&s?`<em>${s.stones.length}</em>`:''}</button>`).join('')}</nav>
         <div class="rail-spacer"></div>
-        <div class="rail-foot"><span>LOCAL SAVE · V0.4.10 BETA · XCIBE95X</span><a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a></div>
+        <div class="rail-foot"><span>LOCAL SAVE · V0.4.11 BETA · XCIBE95X</span><a class="repository-link" href="${esc(REPOSITORY_URL)}" target="_blank" rel="noreferrer">GitHub repository ↗</a></div>
       </aside>
       <main class="main">
         <header class="topbar"><div class="crumb"><span class="crumb-root">SAVE</span><b>/</b><strong>${esc(nav.find(x=>x[0]===state.page)?.[2]??'Currencies')}</strong><span class="crumb-file">${s?esc(s.filename):'No save loaded'}</span></div><div class="top-actions">${s?`<span class="save-state ${s.has_unsaved_changes?'pending':''}">${s.has_unsaved_changes?'CHANGES PENDING':'SAVE LOADED'}</span>${s.has_unsaved_changes?'<button class="button button-quiet" data-action="undo">Revert</button>':''}<button class="button button-quiet" data-action="open-backups">Backups</button>`:''}<button class="button button-quiet" data-action="open">Open save</button><button class="button button-save" data-action="save" ${!s?.has_unsaved_changes?'disabled':''}>Save changes <span>↗</span></button></div></header>
@@ -471,6 +471,20 @@ function maxTrinketEdits(stone) {
   return edits;
 }
 
+// Raise each trinket's rarity suffix to Legendary (_L). Trinkets without a
+// recognized rarity suffix (e.g. AlienWeapon) or already Legendary are skipped.
+async function raiseTrinketsToLegendary(stones) {
+  let changed=0;
+  for(const stone of stones){
+    const letter=rarityLetterOf(stone.id);
+    if(!letter||letter==='L')continue;
+    try{state.save=await invoke('set_trinket_rarity',{index:stone.index,letter:'L'});changed++;}
+    catch{/* leave trinkets that can't be converted untouched */}
+  }
+  if(changed)render();
+  return changed;
+}
+
 function bind() {
   document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{state.page=b.dataset.page;state.search='';render();});
   document.querySelectorAll('[data-action]').forEach(b=>b.onclick=async e=>{
@@ -507,7 +521,8 @@ function bind() {
       const edits=maxTrinketEdits(stone);
       if(!edits.length){toast('This trinket has no editable level or rank fields.',true);return;}
       stage(edits);await flushStage();
-      toast('Trinket set to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained.');
+      const raised=await raiseTrinketsToLegendary([stone]);
+      toast(`Trinket set to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained.${raised?' Rarity set to Legendary.':''}`);
     }
     if(a==='max-all-trinkets'){
       const stones=state.save?.stones??[];
@@ -515,7 +530,8 @@ function bind() {
       const edits=stones.flatMap(maxTrinketEdits);
       if(!edits.length){toast('No editable trinket fields were found.',true);return;}
       stage(edits);await flushStage();
-      toast(`Set ${stones.length} trinket(s) to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained. Base roll and all other fields were left unchanged.`);
+      const raised=await raiseTrinketsToLegendary(stones);
+      toast(`Set ${stones.length} trinket(s) to Level 6 and Rank 6; Magnitude increased by 7 percentage points per rank gained.${raised?` ${raised} raised to Legendary.`:''} Base roll and all other fields were left unchanged.`);
     }
     if(a==='export-trinket'){try{await invoke('export_trinket',{index:Number(b.dataset.index)});toast('Trinket exported.');}catch(err){toast(String(err),true);}}
     if(a==='replace-observed'){const index=Number(b.dataset.observation);if(Number.isInteger(index))await replaceTemplate(index);}

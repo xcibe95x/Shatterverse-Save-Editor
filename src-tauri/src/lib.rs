@@ -872,9 +872,29 @@ impl LoadedSave {
 #[derive(Default)]
 struct AppState(Mutex<Option<LoadedSave>>);
 
+// Preferred directory to open the file picker in: the folder of the save that is
+// already loaded, otherwise the game's default SaveGames folder. Returns None when
+// neither exists so the dialog falls back to its normal default location.
+fn initial_save_dir(state: &State<'_, AppState>) -> Option<PathBuf> {
+    if let Ok(guard) = state.0.lock() {
+        if let Some(loaded) = guard.as_ref() {
+            if let Some(dir) = loaded.path.parent() {
+                if dir.is_dir() { return Some(dir.to_path_buf()); }
+            }
+        }
+    }
+    let default = PathBuf::from(std::env::var_os("LOCALAPPDATA")?)
+        .join("SeriousSamShatterverse")
+        .join("Saved")
+        .join("SaveGames");
+    default.is_dir().then_some(default)
+}
+
 #[tauri::command]
 fn open_save(app: AppHandle, state: State<'_, AppState>) -> Result<Snapshot, String> {
-    let file = app.dialog().file().add_filter("Serious Sam save", &["sav"]).blocking_pick_file().ok_or("No save selected.")?;
+    let mut dialog = app.dialog().file().add_filter("Serious Sam save", &["sav"]);
+    if let Some(dir) = initial_save_dir(&state) { dialog = dialog.set_directory(dir); }
+    let file = dialog.blocking_pick_file().ok_or("No save selected.")?;
     let path = file.into_path().map_err(|e| format!("Invalid save path: {e}"))?;
     let loaded = LoadedSave::open(path)?;
     let snapshot = loaded.snapshot();

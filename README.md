@@ -1,6 +1,6 @@
 # Serious Sam: Shatterverse Save Editor
 
-A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.4.10 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
+A portable Windows desktop app for viewing and editing supported fields in Serious Sam: Shatterverse save files. Version **0.4.11 beta**. The app uses a Rust/Tauri backend and keeps save processing on the local computer.
 
 ## What the app can do
 
